@@ -8,7 +8,7 @@
 
 var Puzzle = (function(){
 
-	var board, board_w, board_h, tile_size, tiles_w, tiles_h, empty, selected;
+	var board, board_w, board_h, tile_size, tiles_w, tiles_h, empty, last, current;
 	var image = new Image();
 	
 
@@ -76,9 +76,7 @@ var Puzzle = (function(){
 		var j = Math.floor(pos[1] / tile_size)
 		if ( i >= 0 && i < tile_w && j >= 0 && j < tile_h ){
 			if( !selected ) {
-				selected = board[i][j]
-			} else if (selected.isEqual(board[i][j])){ // Dragging
-
+				current = board[i][j];
 			} else {
 				last = current;
 				current = [i, j];
@@ -128,19 +126,22 @@ var Puzzle = (function(){
 }());
 
 var Tile = (function(){
+
+	var that;
 	function Tile(x,y){
 		this.x = x;
 		this.y = y;
 		this.empty = false;
 		this.selected = false;
+		that = this;
 	};
 
 	function pos(){
 		return [x,y];
 	}
 
-	function equals(tile){
-		if (tile.x == this.x && tile.y == this.y ){
+	function isEqual(tile){
+		if (tile.x == that.x && tile.y == that.y ){
 			return true;
 		}
 
@@ -148,7 +149,8 @@ var Tile = (function(){
 	}
 
 	Tile.prototype = {
-		pos : pos
+		pos : pos,
+		isEqual : isEqual
 	};
 
 	return Tile;
