@@ -8,7 +8,7 @@
 
 var Puzzle = (function(){
 
-	var board, board_w, board_h, tile_size, tiles_w, tiles_h, empty, last, current;
+	var board, board_w, board_h, tile_size, tiles_w, tiles_h, last, current;
 	var image = new Image();
 	
 
@@ -20,9 +20,8 @@ var Puzzle = (function(){
 		tile_h = board_h/tile_size;
 		image.src = image_url;
 
-
-		// Initialize all tiles 
 		var i, j;
+
 		board = new Array(tile_w);
 		for(i=0; i < tile_w; i++){
 			board[i] = new Array(tile_h);
@@ -31,20 +30,11 @@ var Puzzle = (function(){
 			}
 		}
 
-
-		// Track empty tile
+		shuffle();
 		empty = board[0][0];
 		board[0][0].empty = true;
-
-		// Shuffle tiles around to make it fun
-		shuffle();
 	};
 
-
-	/**
-	 * Move the tiles around the board in a semi-random order.
-	 */
-	 * 
 	function shuffle(){
 		var i, j, k, tmp;
 		for(i=0; i < tile_w; i++){
@@ -67,16 +57,14 @@ var Puzzle = (function(){
 		}
 	}
 
-	/**
-	 * Find the tile at position pos and update it's state
-	 * @param  {Array} pos [coordinates of pointable]
-	 */
 	function update(pos){
+		
 		var i = Math.floor(pos[0] / tile_size)
 		var j = Math.floor(pos[1] / tile_size)
 		if ( i >= 0 && i < tile_w && j >= 0 && j < tile_h ){
-			if( !selected ) {
-				current = board[i][j];
+			if( !current ) {
+				current = [i, j]
+				board[i][j].selected = true;
 			} else {
 				last = current;
 				current = [i, j];
@@ -126,22 +114,19 @@ var Puzzle = (function(){
 }());
 
 var Tile = (function(){
-
-	var that;
 	function Tile(x,y){
 		this.x = x;
 		this.y = y;
 		this.empty = false;
 		this.selected = false;
-		that = this;
 	};
 
 	function pos(){
 		return [x,y];
 	}
 
-	function isEqual(tile){
-		if (tile.x == that.x && tile.y == that.y ){
+	function equals(tile){
+		if (tile.x == this.x && tile.y == this.y ){
 			return true;
 		}
 
@@ -149,8 +134,7 @@ var Tile = (function(){
 	}
 
 	Tile.prototype = {
-		pos : pos,
-		isEqual : isEqual
+		pos : pos
 	};
 
 	return Tile;
